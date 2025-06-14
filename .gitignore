@@ -1,0 +1,23 @@
+# Ignore Node.js/Next.js stuff in frontend/
+frontend/node_modules/
+frontend/.next/
+frontend/out/
+
+# Logs
+frontend/*.log
+frontend/npm-debug.log*
+frontend/yarn-debug.log*
+frontend/pnpm-debug.log*
+
+# Env files
+frontend/.env
+frontend/.env.local
+frontend/.env.*.local
+
+# IDE/editor stuff
+frontend/.vscode/
+frontend/.idea/
+
+# OS files
+frontend/.DS_Store
+frontend/Thumbs.db
