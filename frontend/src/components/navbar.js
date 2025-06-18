@@ -1,16 +1,37 @@
-'use client';
+"use client";
 
-import Link from 'next/link';
-import { usePathname } from 'next/navigation';
-import { useState } from 'react';
+import Link from "next/link";
+import { usePathname } from "next/navigation";
+import { useEffect, useState, useRef } from "react";
+
+import Logo from "@/assets/logo.svg"; // Adjust the path as necessary'
 
 const links = [
-  { name: 'Home', href: '/' },
-  { name: 'About', href: '/about' },
-  { name: 'Community', href: '/community' },
+  { name: "Home", href: "/" },
+  { name: "About", href: "/about" },
+  { name: "Community", href: "/community" },
 ];
 
 export default function Navbar() {
+  
+  const [navDark, setNavDark] = useState(false);
+
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        setNavDark(!entry.isIntersecting);
+      },
+      { threshold: 0.1 }
+    );
+
+    const darkSection = document.getElementById("dark-section");
+    if (darkSection) observer.observe(darkSection);
+
+    return () => {
+      if (darkSection) observer.unobserve(darkSection);
+    };
+  }, []);
+  
   const pathname = usePathname();
   const [showMore, setShowMore] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
@@ -19,16 +40,19 @@ export default function Navbar() {
 
   const navLinkStyle = (href) =>
     `block px-4 py-2 text-lg font-medium transition-colors ${
-      isActive(href)
-        ? 'text-[#FAAF08]'
-        : 'text-[#8F8F8F] hover:text-white'
+      isActive(href) ? "text-[#FAAF08]" : `text-[#8F8F8F] ${navDark ? "hover:text-black" : "hover:text-white"}`
     }`;
+
 
   return (
     <nav className="fixed top-0 left-0 right-0 z-50 w-full bg-transparent px-6 py-4 backdrop-blur-md">
       <div className="max-w-7xl mx-auto flex items-center justify-between">
         {/* Logo or Title (optional) */}
-        <div className="text-xl font-bold text-[#FAAF08]">Share Recipe</div>
+        <div className="flex items-center space-x-4 w-auto h-auto">
+          <Link href="/">
+            <Logo />
+          </Link>
+        </div>
 
         {/* Desktop Nav */}
         <div className="hidden md:flex items-center gap-6">
@@ -51,9 +75,19 @@ export default function Navbar() {
               More
             </button>
             {showMore && (
-              <div className="absolute right-0 mt-2 w-40 rounded bg-white p-2 shadow-md z-10">
-                <Link href="/contact" className="block px-4 py-2 text-[#8F8F8F] hover:bg-gray-100 hover:text-[#FAAF08]">Contact</Link>
-                <Link href="/faq" className="block px-4 py-2 text-[#8F8F8F] hover:bg-gray-100 hover:text-[#FAAF08]">FAQ</Link>
+              <div className="absolute right-0 mt-2 w-40 rounded p-2 z-10 bg-transparent backdrop-blur-md">
+                <Link
+                  href="/contact"
+                  className="block px-4 py-2 text-[#8F8F8F]  hover:text-[#FAAF08]"
+                >
+                  Contact
+                </Link>
+                <Link
+                  href="/faq"
+                  className="block px-4 py-2 text-[#8F8F8F] hover:text-[#FAAF08]"
+                >
+                  FAQ
+                </Link>
               </div>
             )}
           </div>
@@ -88,14 +122,23 @@ export default function Navbar() {
             More
           </button>
           {showMore && (
-            <div className="pl-4">
-              <Link href="/contact" className="block px-4 py-2 text-[#8F8F8F] hover:bg-gray-100 hover:text-[#FAAF08]">Contact</Link>
-              <Link href="/faq" className="block px-4 py-2 text-[#8F8F8F] hover:bg-gray-100 hover:text-[#FAAF08]">FAQ</Link>
+            <div className="pl-4 backdrop-blur-md">
+              <Link
+                href="/contact"
+                className="block px-4 py-2 text-[#8F8F8F] hover:text-[#FAAF08]"
+              >
+                Contact
+              </Link>
+              <Link
+                href="/faq"
+                className="block px-4 py-2 text-[#8F8F8F]  hover:text-[#FAAF08]"
+              >
+                FAQ
+              </Link>
             </div>
           )}
         </div>
       )}
-
     </nav>
   );
 }

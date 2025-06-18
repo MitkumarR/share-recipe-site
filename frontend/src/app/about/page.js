@@ -1,11 +1,62 @@
 export default function AboutPage() {
   return (
-  
-     <div className="flex flex-col items-center justify-center min-h-screen ">
-        <h1 className="text-4xl font-bold mt-6">About Us</h1>
-        <p className="text-lg text-gray-600 mt-2">
-           Welcome to our Recipe Sharing website. Here, food enthusiasts can post their favorite dishes, read culinary blogs, and get inspired.
-      </p>
+    <div className="flex flex-col items-center justify-start min-h-screen bg-[#1E1E1E] text-white">
+
+      {/* Hero Section */}
+      <section className="w-full bg-yellow-100 py-16 px-4 text-center">
+        <h1 className="text-5xl font-bold mb-4 text-yellow-700">About Us</h1>
+        <p className="text-lg max-w-3xl mx-auto text-gray-700">
+          Welcome to our Recipe Sharing Platform — where food meets creativity and community.
+          We’re passionate about bringing together cooks, food lovers, and culinary explorers to share their love for flavors.
+        </p>
+      </section>
+
+      {/* Mission Section */}
+      <section className="py-16 px-4 max-w-5xl text-center">
+        <h2 className="text-3xl font-semibold mb-4">Our Mission</h2>
+        <p className="text-gray-600 max-w-3xl mx-auto">
+          Our mission is to create a digital kitchen where everyone from beginner cooks to professional chefs
+          can share, discover, and celebrate diverse recipes from all around the world.
+        </p>
+      </section>
+
+      {/* Features Section */}
+      <section className="py-12 px-4 bg-white w-full">
+        <div className="max-w-6xl mx-auto grid grid-cols-1 md:grid-cols-3 gap-8 text-center">
+          <div className="p-6 rounded-lg shadow hover:shadow-md transition duration-300">
+            <h3 className="text-xl font-semibold mb-2">Recipe Sharing</h3>
+            <p className="text-gray-500">
+              Post your own unique dishes and explore hundreds of recipes from others.
+            </p>
+          </div>
+          <div className="p-6 rounded-lg shadow hover:shadow-md transition duration-300">
+            <h3 className="text-xl font-semibold mb-2">Food Blogs</h3>
+            <p className="text-gray-500">
+              Read interesting blogs on food trends, health, and culinary journeys.
+            </p>
+          </div>
+          <div className="p-6 rounded-lg shadow hover:shadow-md transition duration-300">
+            <h3 className="text-xl font-semibold mb-2">Community Feedback</h3>
+            <p className="text-gray-500">
+              Rate, review, and react to recipes — build a trusted food community.
+            </p>
+          </div>
+        </div>
+      </section>
+
+      {/* Call to Action */}
+      <section className="py-16 px-4 text-center bg-yellow-50 w-full">
+        <h2 className="text-2xl font-bold mb-4 text-yellow-700">Join Us Today!</h2>
+        <p className="text-gray-600 mb-6">
+          Share your passion for food. Create your profile, post your best recipes, and engage with a vibrant community of food lovers.
+        </p>
+        <a
+          href="/signup"
+          className="inline-block bg-yellow-500 hover:bg-yellow-600 text-white px-6 py-3 rounded-full font-semibold transition duration-300"
+        >
+          Get Started
+        </a>
+      </section>
     </div>
   );
 }
