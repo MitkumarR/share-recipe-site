@@ -4,7 +4,7 @@ import React from "react";
 import "./globals.css";
 import SearchBar from "@/components/searchbar";
 import { useRef, useEffect } from "react";
-
+import Link from "next/link";
 // Importing icons
 import {
   IoShareSocialOutline,
@@ -13,8 +13,8 @@ import {
   IoBookmarkSharp,
 } from "react-icons/io5";
 
+
 import ChefCuate from "@/assets/chef-cuate.svg"; // Adjust the path as necessary
-import EatingDonutsCuate from "@/assets/Eating donuts-cuate.svg"; // Adjust the path as necessary
 
 export default function Home() {
   const scrollRef = useRef(null);
@@ -45,13 +45,25 @@ export default function Home() {
         <div className="absolute inset-0 bg-black/60 z-0" />
 
         {/* Content on top */}
-        <div className="relative z-10 flex flex-col items-center justify-center h-full text-center px-4">
+        <div className="relative z-10 flex flex-col  items-center justify-center h-full text-center px-4">
           <h1 className="text-4xl font-bold text-white">Welcome to My App</h1>
           <SearchBar />
           <p className="text-xl text-white mt-2">
             A paragraph is a series of sentences that longer than a few
             sentences should be organized into paragraphs.
           </p>
+
+          <Link href="/signin" className="text-yellow-500 hover:underline mt-2 flex items-center justify-center gap-2">
+          <svg
+                className="w-4 h-4"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2"
+                viewBox="0 0 24 24"
+              >
+                <path d="M5 12h14M12 5l7 7-7 7" />
+              </svg>
+              Sign In to Your Account</Link>
         </div>
       </section>
 
@@ -203,7 +215,7 @@ export default function Home() {
 
       <section className=" py-16 px-6 md:px-20 bg-[#1E1E1E]">
         <div className="max-w-2xl mx-auto text-center">
-          <h2 className="text-3xl md:text-4xl font-bold mb-4">
+          <h2 className="text-3xl md:text-4xl font-bold mb-4 text-yellow-500">
             Join Our Community
           </h2>
           <p className="text-gray-400 mb-6">
@@ -212,9 +224,18 @@ export default function Home() {
             personalize your recipe experience.
           </p>
 
-          <button className="bg-yellow-500 hover:border hover:border-white text-white hover:bg-transparent font-semibold px-8 py-3 rounded-lg transition duration-300">
+          {/* <<button className="bg-yellow-500 hover:border hover:border-white text-white hover:bg-transparent font-semibold px-8 py-3 rounded-lg transition duration-300">
             Sign In to Your Account
-          </button>
+          </button>> */}
+
+          <Link href="/signin">
+            <button
+              className="bg-yellow-500 text-black border-transparent hover:text-white hover:border hover:border-white  hover:bg-transparent font-semibold px-8 py-3 rounded-lg transition duration-300"
+              variant="outline"
+            >
+              Sign In to Your Account
+            </button>
+          </Link>
         </div>
       </section>
 
@@ -235,7 +256,9 @@ export default function Home() {
                 type="email"
                 placeholder="@email"
                 className="outline-none w-full bg-transparent placeholder-gray-400 text-[#1E1E1E]"
-                onFocus={className => className.target.classList.add('outline-none')}
+                onFocus={(className) =>
+                  className.target.classList.add("outline-none")
+                }
               />
             </div>
 
@@ -264,7 +287,13 @@ export default function Home() {
           {/* Right Side: Illustration */}
           <div className="flex justify-center">
             {/* Replace with your own SVG component or <img src="" /> */}
-            <EatingDonutsCuate className="w-[80vw] max-w-md h-auto object-contain" />
+            {/* <EatingDonutsCuate className="w-[80vw] max-w-md h-auto object-contain" /> */}
+
+            <img
+              src="/coffee cup-cuate.png"
+              alt="Eating Donuts Illustration"
+              className="w-[80vw] max-w-md h-auto object-contain"
+            />
           </div>
         </div>
       </section>

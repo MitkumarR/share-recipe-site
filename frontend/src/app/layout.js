@@ -1,7 +1,8 @@
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
-import Navbar from "@/components/navbar";
-import Footer from "@/components/footer";
+import LayoutWrapper from "@/components/wraplayout";
+import { notFound } from "next/navigation";
+import ReduxProvider from "@/redux/provider";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -19,14 +20,18 @@ export const metadata = {
 };
 
 export default function RootLayout({ children }) {
+  if (!children) {
+    notFound(); // will show the app/not-found.js
+  }
+
   return (
     <html lang="en">
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
-        <Navbar />
-        <main className="pt-20">{children}</main>
-        <Footer />
+        <ReduxProvider>
+          <LayoutWrapper>{children}</LayoutWrapper>
+        </ReduxProvider>
       </body>
     </html>
   );

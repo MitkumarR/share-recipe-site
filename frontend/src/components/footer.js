@@ -6,12 +6,20 @@ import {
   FaYoutube,
 } from "react-icons/fa6";
 
-// import Logo from "@/assets/logo.svg"; // Adjust the path as necessary
-
+import Link from "next/link";
 export default function Footer() {
   return (
     <footer className="bg-[#1E1E1E] text-gray-400 py-10 px-4 text-sm">
       <div className="flex flex-col items-center gap-6">
+        {/* Logo */}
+        <div className="flex items-center space-x-4 w-auto h-auto">
+                  <Link href="/">
+                  <h1 className="text-4xl font-light tracking-wider ">
+                    <span className="font-extralight text-white">share</span>
+                    <span className="font-medium text-yellow-500">recipe</span>
+                  </h1>
+                </Link>
+                </div>
         {/* Top Nav Links */}
         <div className="flex flex-wrap justify-center gap-6">
           {["About", "Blog", "Jobs", "Press", "Accessibility", "Partners"].map(
