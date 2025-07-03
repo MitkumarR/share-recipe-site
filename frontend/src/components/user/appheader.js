@@ -2,24 +2,24 @@
 
 import { Badge } from "@/components/ui/badge";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
-
+import { useSelector } from "react-redux";
 
 export default function AppHeader() {
-  const user = {
-    name: "Mit",
-    username: "mitdev",
-    role: "Master Chef",
-  };
+  const user = useSelector((state) => state.user);
+  if (!user) {
+    return null; // or a loading state
+  }
 
+  
   return (
     <div className="flex items-center justify-between p-6 gap- border-b bg-white">
       <div className="flex items-center gap-4">
         <Avatar>
-          <AvatarFallback>{user.name[0]}</AvatarFallback>
+          <AvatarFallback>A</AvatarFallback>
         </Avatar>
         <div>
-          <p className="text-lg font-semibold">{user.name}</p>
-          <p className="text-sm text-gray-500">@{user.username}</p>
+          <p className="text-lg font-semibold">{user.username}</p>
+          <p className="text-sm text-gray-500">{user.email}</p>
         </div>
       </div>
       <div className="flex items-center gap-2">

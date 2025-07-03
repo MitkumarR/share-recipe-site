@@ -12,15 +12,8 @@ import {
   CardTitle,
 } from "@/components/ui/card.jsx";
 
-import {
-  Dialog,
-  DialogClose,
-  DialogHeader,
-  DialogTitle,
-  DialogContent,
-  DialogTrigger,
-} from "@/components/ui/dialog";
-
+import { useState } from "react";
+import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button.jsx";
 import { Input } from "@/components/ui/input.jsx";
 import { Label } from "@/components/ui/label.jsx";
@@ -28,6 +21,74 @@ import { Label } from "@/components/ui/label.jsx";
 import Logo from "@/assets/logo.svg"; // Adjust the path as necessary'
 
 export default function SignupPage() {
+  const router = useRouter();
+
+  const [formData, setFormData] = useState({
+    email: "",
+    username: "",
+    password: "",
+    password2: "",
+  });
+
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState("");
+  const [successMsg, setSuccessMsg] = useState("");
+
+  const handleChange = (e) => {
+    setFormData({
+      ...formData,
+      [e.target.name]: e.target.value,
+    });
+  };
+
+  const handleSignup = async (e) => {
+    e.preventDefault();
+    setLoading(true);
+    setError("");
+    setSuccessMsg("");
+
+    // Create a new object to avoid direct state mutation
+    const signupData = {
+      ...formData,
+      username: formData.email.split("@")[0],
+    };
+
+    // Client-side password match check
+    if (formData.password !== formData.password2) {
+      setError("Passwords do not match");
+      setLoading(false);
+      return;
+    }
+
+    try {
+      console.log("Sending data:", signupData);
+      const res = await fetch("http://localhost:8000/api/user/signup/", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(signupData),
+      });
+
+      if (res.ok) {
+        setSuccessMsg("Signup successful! You can now login.");
+        console.log("Signup successful:", signupData);
+        // Optionally redirect to login page
+        setTimeout(() => { 
+          router.push("/signin");
+        }, 2000); // Redirect after 2 seconds
+      } else {
+        const data = await res.json();
+        setError(data.detail || "Signup failed. Please check your details.");
+        console.error("Signup error:", data);
+      }
+    } catch (err) {
+      setError("Something went wrong. Please try again.");
+    } finally {
+      setLoading(false);
+    }
+  };
+
   return (
     <div className="flex flex-col gap-5 justify-center -mt-25 h-screen">
       <div className="flex items-center self-center justify-center w-auto h-auto">
@@ -49,14 +110,18 @@ export default function SignupPage() {
           </CardDescription>
         </CardHeader>
         <CardContent>
-          <form>
+          <form onSubmit={handleSignup}>
             <div className="flex flex-col gap-6">
               <div className="grid gap-2">
                 <Label htmlFor="email">Email</Label>
                 <Input
-                  id="email"
+                  name="email"
                   type="email"
-                  placeholder="your@example.com"
+                  id="email"
+                  value={formData.email}
+                  onChange={handleChange}
+                  placeholder="your@email.com"
+                  autoComplete="new-email"
                   required
                 />
               </div>
@@ -64,25 +129,44 @@ export default function SignupPage() {
                 <div className="flex items-center">
                   <Label htmlFor="password">Password</Label>
                 </div>
-                <Input id="password" type="password" required />
+                <Input
+                  name="password"
+                  type="password"
+                  value={formData.password}
+                  onChange={handleChange}
+                  placeholder="Your secure password"
+                  required
+                  autoComplete="new-password"
+                />
               </div>
               <div className="grid gap-2">
                 <div className="flex items-center">
-                  <Label htmlFor="confirm-password">Confirm Password</Label>
+                  <Label htmlFor="password2">Confirm Password</Label>
                 </div>
-                <Input id="confirm-password" type="password" required />
+                <Input
+                  name="password2"
+                  type="password"
+                  value={formData.password2}
+                  onChange={handleChange}
+                  placeholder="Enter password again"
+                  required
+                  autoComplete="new-password"
+                />
               </div>
             </div>
+            {error && <p className="text-red-500 text-sm mt-2">{error}</p>}
+            {successMsg && (
+              <p className="text-green-500 text-sm mt-2">{successMsg}</p>
+            )}
+            <Button
+              type="submit"
+              className="w-full bg-yellow-500 text-[#1E1E1E] mt-7 hover:text-white"
+            >
+              Let's Cook
+            </Button>
           </form>
         </CardContent>
         <CardFooter className="flex-col gap-5">
-          <Button
-            type="submit"
-            className="w-full bg-yellow-500 text-[#1E1E1E] hover:text-white"
-          >
-            Let's Cook
-          </Button>
-
           <div className="items-start grid gap-2">
             <span className="text-sm text-[#8F8F8F]">
               By creating an account, you agree to the Goodreads Terms of

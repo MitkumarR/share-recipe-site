@@ -21,3 +21,43 @@ frontend/.idea/
 # OS files
 frontend/.DS_Store
 frontend/Thumbs.db
+
+# === Python / Django ===
+__pycache__/
+*.py[cod]
+*.sqlite3
+*.log
+*.pot
+*.pyc
+*.pyo
+*.pyd
+*.env
+.env*
+*.db
+db.sqlite3
+local_settings.py
+
+# Django migrations
+backend/**/migrations/
+!backend/**/migrations/__init__.py
+
+# Media & static (if not storing in repo)
+media/
+staticfiles/
+backend/static/
+backend/media/
+
+# PyCharm / JetBrains IDE
+.idea/
+*.iml
+*.ipr
+*.iws
+
+# OS Specific
+.DS_Store
+Thumbs.db
+
+# Virtual Environment 
+venv/
+env/
+ENV/
