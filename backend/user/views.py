@@ -46,12 +46,12 @@ class SigninView(APIView):
                 return Response({"detail": "Invalid credentials."}, status=status.HTTP_401_UNAUTHORIZED)
 
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-    
+
 class ProfileView(APIView):
     permission_classes = [IsAuthenticated]
-
     def get(self, request):
         user = request.user
+
         return Response({
             "username": user.username,
             "firstname": user.first_name,

@@ -18,7 +18,12 @@ import { Button } from "@/components/ui/button.jsx";
 import { Input } from "@/components/ui/input.jsx";
 import { Label } from "@/components/ui/label.jsx";
 
+import { useDispatch } from "react-redux";
+import { setUser } from "@/redux/slices/userSlice";
+import { fetchProfile } from "@/lib/api/profile";
+
 export default function Signin() {
+  const dispatch = useDispatch();
   const router = useRouter();
 
   const [formData, setFormData] = useState({
@@ -42,7 +47,7 @@ export default function Signin() {
     setLoading(true);
     setError("");
     setSuccessMsg("");
-  
+
     try {
       const res = await fetch("http://localhost:8000/api/user/signin/", {
         method: "POST",
@@ -51,17 +56,26 @@ export default function Signin() {
         },
         body: JSON.stringify(formData),
       });
-  
+
       const data = await res.json(); // Always parse the response
-  
+
       if (res.ok) {
         localStorage.setItem("access", data.access);
         localStorage.setItem("refresh", data.refresh);
-  
+
         setSuccessMsg("Signin successful!");
-        setTimeout(() => {
-          router.push("/user/kitchen");
-        }, 1000);
+        
+        try {
+          const profile = await fetchProfile();
+          dispatch(setUser(profile));
+          setError("");
+          setTimeout(() => {
+            router.push("/user/kitchen");
+          }, 1000);
+        } catch (profileErr) {
+          setError(profileErr.message || "Failed to load profile.");
+        }
+
       } else {
         setError(data.detail || "Signin failed. Please check your details.");
       }

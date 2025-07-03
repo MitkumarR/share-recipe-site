@@ -7,15 +7,15 @@ import { useSelector } from "react-redux";
 export default function AppHeader() {
   const user = useSelector((state) => state.user);
   if (!user) {
-    return null; // or a loading state
+    return null;
   }
-
-  
   return (
     <div className="flex items-center justify-between p-6 gap- border-b bg-white">
       <div className="flex items-center gap-4">
         <Avatar>
-          <AvatarFallback>A</AvatarFallback>
+          <AvatarFallback>
+            {user.username?.[0] || "U"}
+          </AvatarFallback>
         </Avatar>
         <div>
           <p className="text-lg font-semibold">{user.username}</p>
