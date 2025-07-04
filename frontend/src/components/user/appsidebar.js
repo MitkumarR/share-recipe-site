@@ -43,20 +43,15 @@ const userKitchenItems = [
   },
 ];
 
-const settingsItems = [
-  {
-    title: "Settings",
-    url: "#",
-    icon: Settings,
-  },
-  {
-    title: "Sign Out",
-    url: "#",
-    icon: LogOut,
-  },
-];
 
 export default function AppSidebar() {
+
+  const handleSignout = () => {
+    // Handle sign out logic here
+    localStorage.removeItem("access");
+    localStorage.removeItem("refresh");
+    window.location.href = "/signin"; // Redirect to sign-in page
+  }
   return (
     <Sidebar className="min-h-screen border-r border-gray-200 bg-white dark:bg-gray-950">
       <SidebarContent>
@@ -104,19 +99,28 @@ export default function AppSidebar() {
           </SidebarGroupLabel>
           <SidebarGroupContent>
             <SidebarMenu>
-              {settingsItems.map((item) => (
-                <SidebarMenuItem key={item.title}>
+                <SidebarMenuItem key="Settings">
                   <SidebarMenuButton asChild>
                     <a
-                      href={item.url}
+                      href="user/settings"
                       className="flex items-center gap-3 hover:text-yellow-500 transition"
                     >
-                      <item.icon className="w-5 h-5" />
-                      <span>{item.title}</span>
+                      <Settings className="w-5 h-5" />
+                      <span>Settings</span>
                     </a>
                   </SidebarMenuButton>
                 </SidebarMenuItem>
-              ))}
+                <SidebarMenuItem key="Sign Out">
+                  <SidebarMenuButton asChild>
+                    <button
+                      onClick={handleSignout}
+                      className="flex items-center gap-3 hover:text-yellow-500 transition"
+                    >
+                      <LogOut className="w-5 h-5" />
+                      <span>Sign Out</span>
+                    </button>
+                  </SidebarMenuButton>
+                </SidebarMenuItem>
             </SidebarMenu>
           </SidebarGroupContent>
         </SidebarGroup>

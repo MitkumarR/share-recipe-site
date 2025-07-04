@@ -16,12 +16,43 @@ import { Badge } from "@/components/ui/badge";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import ErrorPage from "@/components/error";
 
-
 export default function KitchenDashboard() {
-  
+  const dispatch = useDispatch();
+  const router = useRouter();
+  const [checkingAuth, setCheckingAuth] = useState(true);
   const user = useSelector((state) => state.user);
 
-  
+  useEffect(() => {
+    const accessToken = localStorage.getItem("access");
+    const refreshToken = localStorage.getItem("refresh");
+    if (!accessToken || !refreshToken) {
+      router.push("/signin");
+    } else {
+      // Use an async function inside useEffect
+      const getProfile = async () => {
+        try {
+          const profile = await fetchProfile();
+          dispatch(setUser(profile));
+          console.log("Fetched profile:", profile);
+        } catch (err) {
+          console.error("Failed to fetch profile:", err);
+          // Optionally redirect or show error
+        } finally {
+          setCheckingAuth(false);
+        }
+      };
+      getProfile();
+    }
+  }, [router, dispatch]);
+
+  if (checkingAuth) {
+    return (
+      <div className="flex flex-col items-center justify-center h-screen">
+        <p className="text-gray-500 text-lg">Checking authentication...</p>
+      </div>
+    );
+  }
+
   console.log("User data in KitchenDashboard:", user);
   if (!user) {
     return (
@@ -32,40 +63,49 @@ export default function KitchenDashboard() {
   }
 
   return (
-    <div className="flex flex-col gap-5 justify-center -mt-25 h-screen bg-gray-50">
-      <Card className="w-full max-w-md self-center">
-        <CardHeader>
-          <CardTitle>Your Profile</CardTitle>
-          <CardDescription>Here is your account information.</CardDescription>
-        </CardHeader>
-        <CardContent>
-          <div className="flex items-center gap-4 mb-6">
-            <div>
-              <p className="text-lg font-semibold">{user.username}</p>
-              <p className="text-sm text-gray-500">{user.email}</p>
-            </div>
+    <div className="flex min-h-screen">
+      <div className="w-full">
+        {/* Header section */}
+        <div className="flex flex-col items-center bg-yellow-50 py-6 px-6 border-b">
+          <div className="h-24 w-24 rounded-full bg-yellow-500 flex items-center justify-center text-3xl font-bold text-white">
+            {user.username ? user.username[0].toUpperCase() : "U"}
           </div>
-          <div className="grid gap-2">
-            <div>
-              <span className="font-medium">First Name: </span>
-              <span>{user.firstname}</span>
-            </div>
-            <div>
-              <span className="font-medium">Last Name: </span>
-              <span>{user.lastname}</span>
-            </div>
-            <div>
-              <span className="font-medium">Joined: </span>
-              <span>{new Date(user.joined).toLocaleDateString()}</span>
-            </div>
-            <div>
-              <Badge className="bg-yellow-500 text-black">
-                {user.role}
-              </Badge>
-            </div>
+          <h2 className="mt-4 text-2xl font-bold">{user.username}</h2>
+          <p className="text-gray-500">{user.email}</p>
+          <Badge className="mt-2 bg-yellow-500 text-black">{user.role}</Badge>
+        </div>
+
+        {/* Info section */}
+        <div className="px-6 py-6 space-y-4">
+          <div className="flex gap-10 border-b pb-2">
+            <span className="font-medium">First Name</span>
+            <span>{user.firstname || "N/A"}</span>
           </div>
-        </CardContent>
-      </Card>
+          <div className="flex gap-10 border-b pb-2">
+            <span className="font-medium">Last Name </span>
+            <span>{user.lastname || "N/A"}</span>
+          </div>
+          <div className="flex gap-10 border-b pb-2">
+            <span className="font-medium">Joined</span>
+            <span>
+              {user.joined ? new Date(user.joined).toLocaleDateString() : "N/A"}
+            </span>
+          </div>
+        </div>
+
+        {/* Bottom actions or summary (optional) */}
+        <div className="px-6 py-4 border-t flex justify-between items-center">
+          <p className="text-sm text-gray-500">
+            Keep sharing your amazing recipes!
+          </p>
+          <button
+            className="text-yellow-500 hover:underline font-medium"
+            onClick={() => console.log("Edit Profile clicked")}
+          >
+            Edit Profile
+          </button>
+        </div>
+      </div>
     </div>
   );
 }

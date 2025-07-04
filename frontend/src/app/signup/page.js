@@ -20,7 +20,7 @@ import { Label } from "@/components/ui/label.jsx";
 
 import Logo from "@/assets/logo.svg"; // Adjust the path as necessary'
 
-export default function SignupPage() {
+export default function SignUpPage() {
   const router = useRouter();
 
   const [formData, setFormData] = useState({

@@ -6,15 +6,13 @@ import { useSelector } from "react-redux";
 
 export default function AppHeader() {
   const user = useSelector((state) => state.user);
-  if (!user) {
-    return null;
-  }
+  
   return (
     <div className="flex items-center justify-between p-6 gap- border-b bg-white">
       <div className="flex items-center gap-4">
         <Avatar>
           <AvatarFallback>
-            {user.username?.[0] || "U"}
+            {(user.username?.[0] || "U").toUpperCase()}
           </AvatarFallback>
         </Avatar>
         <div>

@@ -22,7 +22,7 @@ import { useDispatch } from "react-redux";
 import { setUser } from "@/redux/slices/userSlice";
 import { fetchProfile } from "@/lib/api/profile";
 
-export default function Signin() {
+export default function SignInPage() {
   const dispatch = useDispatch();
   const router = useRouter();
 
@@ -68,6 +68,11 @@ export default function Signin() {
         try {
           const profile = await fetchProfile();
           dispatch(setUser(profile));
+          console.log("Fetched profile:", profile);
+          if (!profile) {
+            throw new Error("Profile not found.");  
+          }
+          
           setError("");
           setTimeout(() => {
             router.push("/user/kitchen");

@@ -12,7 +12,7 @@ export default async function Layout({ children }) {
         <AppSidebar />
         <div className="flex-1 flex flex-col">
           <AppHeader />
-          <main className="p-4">{children}</main>
+          <main>{children}</main>
         </div>
       </div>
     </SidebarProvider>
