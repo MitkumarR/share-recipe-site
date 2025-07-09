@@ -3,10 +3,10 @@ from rest_framework.routers import DefaultRouter
 
 from .models import RecipeStep
 from .views import ( RecipeViewSet, IngredientViewSet, RegionViewSet, SessionViewSet, CategoryViewSet, RecipeListView,
-    RecipeDetailView, StepsViewSet )
+    RecipeDetailView, FilterOptionsView, StepsViewSet )
 
 router = DefaultRouter()
-router.register(r'recipe', RecipeViewSet)
+router.register(r'recipes', RecipeViewSet)
 router.register(r'ingredients', IngredientViewSet)
 router.register(r'regions', RegionViewSet)
 router.register(r'sessions', SessionViewSet)
@@ -17,4 +17,5 @@ urlpatterns = [
     path('', include(router.urls)),
     path('recipes/', RecipeListView.as_view(), name='recipe-list'),
     path('recipes/<int:pk>/', RecipeDetailView.as_view(), name='recipe-detail'),
+    path("filters/", FilterOptionsView.as_view(), name="filter-options"),
 ]

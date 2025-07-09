@@ -29,7 +29,7 @@ export default function RecipeDetailPage() {
 
   return (
     <>
-      <div className="p-4 flex min-h-screen justify-center items-center">
+      <div className="p-4 flex min-h-screen justify-center ">
         {loading ? (
           <p className="p-6 h-screen">Loading...</p>
         ) : recipe ? (

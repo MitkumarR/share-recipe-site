@@ -21,7 +21,7 @@ export default function KitchenDashboard() {
   const router = useRouter();
   const [checkingAuth, setCheckingAuth] = useState(true);
   const user = useSelector((state) => state.user);
-
+  const [error, setError] = useState("");
   useEffect(() => {
     const accessToken = localStorage.getItem("access");
     const refreshToken = localStorage.getItem("refresh");
@@ -33,10 +33,8 @@ export default function KitchenDashboard() {
         try {
           const profile = await fetchProfile();
           dispatch(setUser(profile));
-          console.log("Fetched profile:", profile);
         } catch (err) {
-          console.error("Failed to fetch profile:", err);
-          // Optionally redirect or show error
+          setError(err);
         } finally {
           setCheckingAuth(false);
         }
@@ -53,6 +51,12 @@ export default function KitchenDashboard() {
     );
   }
 
+  if (error) {
+    return (
+      <ErrorPage error={error} next={{ name: "Sign In", link: "/signin" }} />
+    );
+  }
+  
   console.log("User data in KitchenDashboard:", user);
   if (!user) {
     return (

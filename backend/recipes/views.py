@@ -1,4 +1,8 @@
 from rest_framework import viewsets, permissions, generics, filters
+from rest_framework.views import APIView
+from rest_framework.response import Response
+from rest_framework import status
+
 from .models import Recipe, Ingredient, Region, Session, Category, RecipeStep
 from .serializers import (
     RecipeSerializer, IngredientSerializer,
@@ -15,6 +19,17 @@ class RecipeListView(generics.ListAPIView):
 class RecipeDetailView(generics.RetrieveAPIView):
     queryset = Recipe.objects.filter(is_published=True)
     serializer_class = RecipeDetailSerializer
+
+class FilterOptionsView(APIView):
+    def get(self, request):
+        data = {
+            "types": ["veg", "non_veg", "jain"],
+            "categories": list(Category.objects.values_list("name", flat=True)),
+            "regions": list(Region.objects.values_list("name", flat=True)),
+            "sessions": list(Session.objects.values_list("name", flat=True)),
+        }
+        return Response(data, status=status.HTTP_200_OK)
+
 
 class RecipeViewSet(viewsets.ModelViewSet):
     queryset = Recipe.objects.all().order_by('-created_at')
@@ -50,3 +65,4 @@ class CategoryViewSet(viewsets.ReadOnlyModelViewSet):
 class StepsViewSet(viewsets.ReadOnlyModelViewSet):
     queryset = RecipeStep.objects.all()
     serializer_class = RecipeStepSerializer
+

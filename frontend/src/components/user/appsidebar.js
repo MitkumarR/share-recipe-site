@@ -4,7 +4,10 @@ import {
   ChefHat,
   BookOpen,
   ListTodo,
+  UserCheck,
   Users,
+  House, 
+  Soup, 
   Settings,
   LogOut,
 } from "lucide-react";
@@ -37,12 +40,30 @@ const userKitchenItems = [
     icon: ListTodo,
   },
   {
-    title: "Community Posts",
+    title: "My Community Posts",
     url: "/user/community-posts",
-    icon: Users,
+    icon: UserCheck,
   },
 ];
 
+const userNavigation = [
+  {
+    title: "Home",
+    url: "/",
+    icon: House,
+  },
+  {
+    title: "Community",
+    url: "/community",
+    icon: Users,
+  },
+  {
+    title: "Recipes",
+    url: "/recipes",
+    icon: Soup,
+  },
+  
+];
 
 export default function AppSidebar() {
 
@@ -92,6 +113,29 @@ export default function AppSidebar() {
           </SidebarGroupContent>
         </SidebarGroup>
 
+        {/* User Navigation */}
+        <SidebarGroup>
+          <SidebarGroupLabel className="text-yellow-500">
+            Navigate
+          </SidebarGroupLabel>
+          <SidebarGroupContent>
+            <SidebarMenu>
+              {userNavigation.map((item) => (
+                <SidebarMenuItem key={item.title}>
+                  <SidebarMenuButton asChild>
+                    <a
+                      href={item.url}
+                      className="flex items-center gap-3 hover:text-yellow-500 transition"
+                    >
+                      <item.icon className="w-5 h-5" />
+                      <span>{item.title}</span>
+                    </a>
+                  </SidebarMenuButton>
+                </SidebarMenuItem>
+              ))}
+            </SidebarMenu>
+          </SidebarGroupContent>
+        </SidebarGroup>
         {/* Settings Section */}
         <SidebarGroup className="mt-4">
           <SidebarGroupLabel className="text-yellow-500">

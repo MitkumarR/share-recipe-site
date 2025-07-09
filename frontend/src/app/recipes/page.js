@@ -1,9 +1,14 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
+import { useSelector, useDispatch } from "react-redux";
+import { fetchRecipes, searchRecipes, filterRecipes } from "@/lib/api/recipes";
+
+import { setRecipes } from "@/redux/slices/recipesSlice";
+
 import Header from "@/components/recipes/header";
-import Link from "next/link"; 
+import Link from "next/link";
 import {
   Card,
   CardHeader,
@@ -15,30 +20,54 @@ import {
 import { Heart, User } from "lucide-react";
 
 export default function RecipePage() {
+  const dispatch = useDispatch();
   const router = useRouter();
-  const [recipes, setRecipes] = useState([]);
-  const [loading, setLoading] = useState(false);
+  const searchParams = useSearchParams();
 
+  const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
+  const recipes = useSelector((state) => state.recipes.recipes);
+
   useEffect(() => {
-    const fetchRecipes = async () => {
+    async function loadData() {
       setLoading(true);
       setError(null);
+
       try {
-        const res = await fetch(`http://localhost:8000/api/recipes/recipes/`);
-        if (!res.ok) throw new Error("Server error");
-        const data = await res.json();
-        setRecipes(data);
+        const search = searchParams.get("search");
+
+        // Build filters object from URL params
+        const filters = {};
+        ["region", "session", "type", "category"].forEach((key) => {
+          const value = searchParams.get(key);
+          if (value) filters[key] = value;
+        });
+
+        let data;
+        if (search) {
+          data = await searchRecipes(search);
+        } else if (Object.keys(filters).length > 0) {
+          data = await filterRecipes(filters);
+        } else {
+          data = await fetchRecipes();
+        }
+
+        dispatch(setRecipes(data));
       } catch (err) {
-        setError("Failed to fetch recipes.");
-        console.error("Failed to fetch recipes:", err);
+        setError("Failed to load recipes");
+        console.error(err);
       } finally {
         setLoading(false);
       }
-    };
-    fetchRecipes();
-  }, []);
+    }
+
+    loadData();
+  }, [searchParams, dispatch]);
+
+  useEffect(() => {
+    console.log("Updated recipes in Redux store:", recipes);
+  }, [recipes]);
 
   if (error) {
     return (
@@ -54,6 +83,7 @@ export default function RecipePage() {
   return (
     <div className="min-h-screen px-4 py-8">
       <Header />
+
       {loading ? (
         <div className="flex items-center justify-center min-h-screen">
           <p className="text-gray-500 text-lg">Loading recipes...</p>
