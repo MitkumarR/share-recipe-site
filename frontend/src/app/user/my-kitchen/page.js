@@ -70,7 +70,7 @@ export default function KitchenDashboard() {
     <div className="flex min-h-screen">
       <div className="w-full">
         {/* Header section */}
-        <div className="flex flex-col items-center bg-yellow-50 py-6 px-6 border-b">
+        <div className="flex flex-col items-center py-6 px-6 border-b">
           <div className="h-24 w-24 rounded-full bg-yellow-500 flex items-center justify-center text-3xl font-bold text-white">
             {user.username ? user.username[0].toUpperCase() : "U"}
           </div>

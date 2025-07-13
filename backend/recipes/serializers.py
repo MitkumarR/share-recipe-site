@@ -1,5 +1,6 @@
 from rest_framework import serializers
-from .models import Recipe, Ingredient, Region, Session, Category, RecipeStep
+from .models import Recipe, Ingredient, Region, Session, Category, RecipeStep, Type
+
 
 class IngredientSerializer(serializers.ModelSerializer):
     class Meta:
@@ -25,6 +26,12 @@ class CategorySerializer(serializers.ModelSerializer):
         fields = ['id', 'name']
 
 
+class TypeSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Type
+        fields = ['id', 'name']
+
+
 class RecipeStepSerializer(serializers.ModelSerializer):
     class Meta:
         model = RecipeStep
@@ -32,37 +39,49 @@ class RecipeStepSerializer(serializers.ModelSerializer):
 
 
 class RecipeSerializer(serializers.ModelSerializer):
-    ingredients = IngredientSerializer(many=True)
-    regions = RegionSerializer(many=True)
-    sessions = SessionSerializer(many=True)
-    categories = CategorySerializer(many=True)
+    ingredients = serializers.PrimaryKeyRelatedField(
+        queryset=Ingredient.objects.all(), many=True)
+    region = serializers.PrimaryKeyRelatedField(queryset=Region.objects.all())
+    session = serializers.PrimaryKeyRelatedField(
+        queryset=Session.objects.all())
+    category = serializers.PrimaryKeyRelatedField(
+        queryset=Category.objects.all())
+    type = serializers.PrimaryKeyRelatedField(queryset=Type.objects.all())
     steps = RecipeStepSerializer(many=True, read_only=True)
     total_likes = serializers.ReadOnlyField()
+    author = serializers.ReadOnlyField(source='author.username')
 
     class Meta:
         model = Recipe
         fields = [
             'id', 'author', 'title', 'description', 'type', 'image',
-            'ingredients', 'regions', 'sessions', 'categories',
+            'ingredients', 'region', 'session', 'category',
             'steps', 'servings', 'prep_time', 'cook_time',
             'created_at', 'updated_at', 'total_likes'
         ]
 
+
 class RecipeListSerializer(serializers.ModelSerializer):
+    author = serializers.ReadOnlyField(source='author.username')
+    likes = serializers.SerializerMethodField()
+
     class Meta:
         model = Recipe
-        fields = ['id', 'title', 'image', 'type', 'prep_time', 'cook_time']
+        fields = ['id', 'title', 'description', 'image', 'likes', 'author']
+
+    def get_likes(self, obj):
+        return obj.total_likes()
+
 
 class RecipeDetailSerializer(serializers.ModelSerializer):
+    region = serializers.StringRelatedField()
+    session = serializers.StringRelatedField()
+    category = serializers.StringRelatedField()
+    type = serializers.StringRelatedField()
     ingredients = serializers.StringRelatedField(many=True)
-    regions = serializers.StringRelatedField(many=True)
-    sessions = serializers.StringRelatedField(many=True)
-    categories = serializers.StringRelatedField(many=True)
-    steps = serializers.SerializerMethodField()
+    steps = RecipeStepSerializer(many=True, read_only=True)
 
     class Meta:
         model = Recipe
-        fields = ['id', 'title', 'description', 'image', 'type', 'ingredients', 'regions', 'sessions', 'categories', 'servings', 'prep_time', 'cook_time', 'steps', 'created_at', 'updated_at']
+        fields = '__all__'
 
-    def get_steps(self, obj):
-        return [{"step_no": step.step_no, "instruction": step.instruction, "timer": step.timer} for step in obj.steps.all()]

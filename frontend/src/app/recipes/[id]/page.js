@@ -12,7 +12,7 @@ export default function RecipeDetailPage() {
     const fetchRecipe = async () => {
       try {
         const res = await fetch(
-          `http://localhost:8000/api/recipes/recipes/${id}/`
+          `http://localhost:8000/api/recipes/recipe/${id}/`
         );
         const data = await res.json();
         setRecipe(data);

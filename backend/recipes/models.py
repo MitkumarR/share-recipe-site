@@ -28,23 +28,25 @@ class Category(models.Model):
     def __str__(self):
         return self.name
 
+class Type(models.Model):
+    name = models.CharField(max_length=50, unique=True)
+
+    def __str__(self):
+        return self.name
 
 class Recipe(models.Model):
-    TYPE_CHOICES = [
-        ("veg", "Veg"),
-        ("non_veg", "Non-Veg"),
-        ("jain", "Jain"),
-    ]
-
+    
     author = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name="recipes")
     title = models.CharField(max_length=200)
     description = models.TextField()
-    type = models.CharField(max_length=20, choices=TYPE_CHOICES)
     image = models.ImageField(upload_to='recipe_images/', blank=True, null=True)
 
-    regions = models.ManyToManyField(Region, related_name='recipes')
-    sessions = models.ManyToManyField(Session, related_name='recipes')
-    categories = models.ManyToManyField(Category, related_name='recipes')
+    category = models.ForeignKey(Category, on_delete=models.CASCADE, related_name='recipes', null=True, blank=True)
+    region = models.ForeignKey(Region, on_delete=models.CASCADE, related_name='recipes', null=True, blank=True)
+    session = models.ForeignKey(Session, on_delete=models.CASCADE, related_name='recipes', null=True, blank=True)
+    type = models.ForeignKey(Type, on_delete=models.CASCADE, related_name='recipes', null=True, blank=True)
+
+    
     ingredients = models.ManyToManyField(Ingredient, related_name='recipes')
 
     likes = models.ManyToManyField(settings.AUTH_USER_MODEL, related_name='liked_recipes', blank=True)

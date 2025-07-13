@@ -1,6 +1,6 @@
 import axios from "axios";
 
-const BASE_URL = "http://localhost:8000/api/recipes/recipes/";
+const BASE_URL = "http://localhost:8000/api/recipes/list/";
 
 export async function fetchRecipes() {
   const res = await axios.get(BASE_URL);
@@ -17,17 +17,25 @@ export async function searchRecipes(searchTerm) {
 export async function filterRecipes(filters) {
   const params = {};
 
-  if (!filters || Object.keys(filters).length === 0) {
-    return fetchRecipes();
-  }
-  if (filters.region) params.region = filters.region;
-  if (filters.session) params.session = filters.session;
-  if (filters.type) params.type = filters.type;
-  if (filters.category) params.category = filters.category;
-  if (Array.isArray(filters.ingredients) && filters.ingredients.length > 0) {
-    params.ingredients = filters.ingredients.join(",");
+  if (filters) {
+    if (filters.region && filters.region !== "undefined" && filters.region !== "") {
+      params.region = filters.region;
+    }
+    if (filters.session && filters.session !== "undefined" && filters.session !== "") {
+      params.session = filters.session;
+    }
+    if (filters.type && filters.type !== "undefined" && filters.type !== "") {
+      params.type = filters.type;
+    }
+    if (filters.category && filters.category !== "undefined" && filters.category !== "") {
+      params.category = filters.category;
+    }
+    if (Array.isArray(filters.ingredients) && filters.ingredients.length > 0) {
+      params.ingredients = filters.ingredients.join(",");
+    }
   }
 
   const res = await axios.get(BASE_URL, { params });
-  return res.data;
+  return res.data;  
 }
+

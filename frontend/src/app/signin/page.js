@@ -75,7 +75,7 @@ export default function SignInPage() {
           
           setError("");
           setTimeout(() => {
-            router.push("/user/kitchen");
+            router.push("/user/my-kitchen");
           }, 1000);
         } catch (profileErr) {
           setError(profileErr.message || "Failed to load profile.");

@@ -8,13 +8,16 @@ from .views import (
     RegionViewSet,
     SessionViewSet,
     CategoryViewSet,
+    TypeViewSet,
     RecipeListView,
     RecipeDetailView,
     FilterOptionsView,
+    OptionsView,
     StepsViewSet,
-    RecipeCreateView,
-    RecipeUpdateView,
-    RecipeDeleteView,
+    MyRecipeCreateView,
+    MyRecipeListView,
+    MyRecipeUpdateView,
+    MyRecipeDeleteView,
     RecipeStepCreateView,
     RecipeStepUpdateView,
     RecipeStepDeleteView
@@ -26,16 +29,21 @@ router.register(r'ingredients', IngredientViewSet)
 router.register(r'regions', RegionViewSet)
 router.register(r'sessions', SessionViewSet)
 router.register(r'categories', CategoryViewSet)
+router.register(r'types', TypeViewSet)
 router.register(r'steps', StepsViewSet)
 
 urlpatterns = [
     path('', include(router.urls)),
-    path('recipes/', RecipeListView.as_view(), name='recipe-list'),
-    path('recipes/<int:pk>/', RecipeDetailView.as_view(), name='recipe-detail'),
+    path('list/', RecipeListView.as_view(), name='recipe-list'),
+    path('recipe/<int:pk>/', RecipeDetailView.as_view(), name='recipe-detail'),
     path("filters/", FilterOptionsView.as_view(), name="filter-options"),
-    path('create/', RecipeCreateView.as_view(), name='recipe-create'),
-    path('<int:pk>/update/', RecipeUpdateView.as_view(), name='recipe-update'),
-    path('<int:pk>/delete/', RecipeDeleteView.as_view(), name='recipe-delete'),
+    path("options/", OptionsView.as_view(), name="options"),
+
+    path("my-recipes/", MyRecipeListView.as_view(), name="my-recipes"),
+    path('create/', MyRecipeCreateView.as_view(), name='recipe-create'),
+    path('<int:pk>/update/',MyRecipeUpdateView.as_view(), name='recipe-update'),
+    path('<int:pk>/delete/', MyRecipeDeleteView.as_view(), name='recipe-delete'),
+
     path('<int:recipe_id>/steps/create/', RecipeStepCreateView.as_view(), name='step-create'),
     path('steps/<int:pk>/update/', RecipeStepUpdateView.as_view(), name='step-update'),
     path('steps/<int:pk>/delete/', RecipeStepDeleteView.as_view(), name='step-delete'),

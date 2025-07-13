@@ -26,22 +26,22 @@ import {
 const userKitchenItems = [
   {
     title: "My Kitchen",
-    url: "/user/kitchen",
+    url: "/user/my-kitchen",
     icon: ChefHat,
   },
   {
     title: "My Recipes",
-    url: "/user/recipes",
+    url: "/user/my-recipes",
     icon: BookOpen,
   },
   {
     title: "My Lists",
-    url: "/user/lists",
+    url: "/user/my-lists",
     icon: ListTodo,
   },
   {
     title: "My Community Posts",
-    url: "/user/community-posts",
+    url: "/user/my-community-posts",
     icon: UserCheck,
   },
 ];

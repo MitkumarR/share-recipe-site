@@ -52,7 +52,7 @@ export default function FilterForm() {
 
   const handleSetFilters = (e) => {
     e.preventDefault();
-    
+
     const filteredParams = Object.fromEntries(
       Object.entries(formData).filter(([_, v]) => v)
     );
@@ -101,8 +101,8 @@ export default function FilterForm() {
             >
               <option value="">Select Region</option>
               {options.regions?.map((r, index) => (
-                <option key={index} value={r}>
-                  {r}
+                <option key={index} value={r.id}>
+                  {r.name}
                 </option>
               ))}
             </select>
@@ -119,8 +119,8 @@ export default function FilterForm() {
             >
               <option value="">Select Session</option>
               {options.sessions?.map((s, index) => (
-                <option key={index} value={s}>
-                  {s}
+                <option key={index} value={s.id}>
+                  {s.name}
                 </option>
               ))}
             </select>
@@ -134,16 +134,16 @@ export default function FilterForm() {
                 <button
                   key={index}
                   type="button"
-                  onClick={() => setFormData({ ...formData, type: t })}
+                  onClick={() => setFormData({ ...formData, type: t.id })}
                   className={`px-3 py-1 rounded-md border transition-all
-          ${
-            formData.type === t
-              ? "bg-yellow-500 text-white border-yellow-500"
-              : "border-yellow-500 text-yellow-500 hover:bg-yellow-100"
-          }
-        `}
+        ${
+          formData.type === t.id
+            ? "bg-yellow-500 text-white border-yellow-500"
+            : "border-yellow-500 text-yellow-500 hover:bg-yellow-100"
+        }
+      `}
                 >
-                  {t}
+                  {t.name}
                 </button>
               ))}
             </div>
@@ -160,8 +160,8 @@ export default function FilterForm() {
             >
               <option value="">Select Category</option>
               {options.categories?.map((c, index) => (
-                <option key={index} value={c}>
-                  {c}
+                <option key={index} value={c.id}>
+                  {c.name}
                 </option>
               ))}
             </select>
