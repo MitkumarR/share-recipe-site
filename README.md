@@ -4,6 +4,15 @@
 
 A modern web platform for discovering, sharing, and managing recipes.  Users can create profiles, share recipes, like and save dishes, and interact with a food-loving community.
 
+# Links repositories
+
+## Frontend
+
+[share-recipe-frontend](https://github.com/MitkumarR/share-recipe-frontend)
+
+## Backend
+
+[share-recipe-backend](https://github.com/MitkumarR/share-recipe-backend)
 
 ## Features
 
