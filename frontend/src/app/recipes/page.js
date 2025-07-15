@@ -115,11 +115,11 @@ export default function RecipePage() {
                   <div className="flex justify-between items-center text-sm text-muted-foreground">
                     <div className="flex items-center gap-2">
                       <User className="w-4 h-4" />
-                      <span>{recipe.chef}</span>
+                      <span>{recipe.author}</span>
                     </div>
                     <div className="flex items-center gap-1">
-                      <Heart className="w-4 h-4 text-red-500" />
                       <span>{recipe.likes}</span>
+                      <Heart className="w-4 h-4 text-red-500" />
                     </div>
                   </div>
                 </CardContent>

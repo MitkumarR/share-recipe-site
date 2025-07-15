@@ -1,9 +1,10 @@
 "use client";
 
 import React from "react";
+import axios from "axios";
 import "./globals.css";
 import SearchBar from "@/components/searchbar";
-import { useRef, useEffect } from "react";
+import { useRef, useEffect, useState } from "react";
 import Link from "next/link";
 // Importing icons
 import {
@@ -12,14 +13,32 @@ import {
   IoShareSocialSharp,
   IoBookmarkSharp,
 } from "react-icons/io5";
-
+import {
+  Dialog,
+  DialogTrigger,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogDescription,
+} from "@/components/ui/dialog";
 
 import ChefCuate from "@/assets/chef-cuate.svg"; // Adjust the path as necessary
+import FeedbackForm from "@/components/feedback";
 
 export default function Home() {
   const scrollRef = useRef(null);
+  const [topRecipes, setTopRecipes] = useState([]);
+  const [focused, setFocused] = useState(null);
 
   useEffect(() => {
+    axios
+      .get("http://127.0.0.1:8000/api/recipes/top-recipes/")
+      .then((res) => {
+        setTopRecipes(res.data);
+        setFocused(res.data[0]);
+      })
+
+      .catch((err) => console.error("Failed to fetch top recipes", err));
     const el = scrollRef.current;
     if (!el) return;
 
@@ -34,6 +53,28 @@ export default function Home() {
     return () => el.removeEventListener("wheel", onWheel);
   }, []);
 
+  const focusedRef = useRef(null);
+
+  useEffect(() => {
+    if (focusedRef.current) {
+      focusedRef.current.scrollIntoView({
+        behavior: "smooth",
+        inline: "center",
+        block: "nearest",
+      });
+    }
+  }, [focused]);
+
+  const handleSetFocused = (recipe) => {
+    setFocused(recipe);
+  };
+
+  const shareUrl = focused
+    ? `${process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:3000"}/recipes/${
+        focused.id
+      }`
+    : "#";
+
   return (
     <>
       {/* Hero Section */}
@@ -42,28 +83,35 @@ export default function Home() {
         style={{ backgroundImage: "url('/home-image.jpg')" }}
       >
         {/* Dark overlay */}
-        <div className="absolute inset-0 bg-black/60 z-0" />
+        <div className="absolute inset-0 bg-black/70 z-0" />
 
         {/* Content on top */}
         <div className="relative z-10 flex flex-col  items-center justify-center h-full text-center px-4">
-          <h1 className="text-4xl font-bold text-white">Welcome to My App</h1>
+          <h1 className="text-4xl font-bold text-white">
+            Find Your Next Favorite Recipe
+          </h1>
           <SearchBar />
-          <p className="text-xl text-white mt-2">
-            A paragraph is a series of sentences that longer than a few
-            sentences should be organized into paragraphs.
+          <p className="text-xl text-white mt-2 text-wrap max-w-7xl">
+            Discover new recipes from around the world and share your own
+            culinary creations. Whether you’re a home cook or a food enthusiast,
+            there’s something delicious waiting for you here.
           </p>
 
-          <Link href="/signin" className="text-yellow-500 hover:underline mt-2 flex items-center justify-center gap-2">
-          <svg
-                className="w-4 h-4"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth="2"
-                viewBox="0 0 24 24"
-              >
-                <path d="M5 12h14M12 5l7 7-7 7" />
-              </svg>
-              Sign In to Your Account</Link>
+          <Link
+            href="/signin"
+            className="text-yellow-500 hover:underline mt-15 flex items-center justify-center gap-2"
+          >
+            <svg
+              className="w-4 h-4"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2"
+              viewBox="0 0 24 24"
+            >
+              <path d="M5 12h14M12 5l7 7-7 7" />
+            </svg>
+            Sign In to Your Account
+          </Link>
         </div>
       </section>
 
@@ -81,74 +129,118 @@ export default function Home() {
         {/* Scrollable Cards */}
         <div
           ref={scrollRef}
-          className="flex overflow-x-auto space-x-4 px-4 pb-4 mt-5 scrollbar-hide"
+          className="flex overflow-x-auto space-x-4 px-4 pb-4 mt-5 scrollbar-hide scroll-smooth h-auto"
         >
-          {Array.from({ length: 10 }).map((_, index) => (
+          {topRecipes.map((recipe) => (
             <div
-              key={index}
-              className="min-w-[350px] h-50 bg-gray-300 rounded-lg flex-shrink-0"
+              key={recipe.id}
+              ref={focused?.id === recipe.id ? focusedRef : null}
+              className={`min-w-[350px] bg-white rounded-lg flex-shrink-0 transition-all duration-300 shadow hover:shadow-lg 
+        ${
+          focused?.id === recipe.id
+            ? "border-b-4 shadow-xl shadow-yellow-100 border-yellow-500  "
+            : "border border-gray-200"
+        }
+      `}
             >
-              {/* Placeholder for dish image */}
+              <button
+                onClick={() => handleSetFocused(recipe)}
+                className="w-full"
+              >
+                <img
+                  src={recipe.image || "/home-image.jpg"}
+                  alt={recipe.title}
+                  className="w-full h-48 object-cover rounded-t-lg"
+                />
+              </button>
             </div>
           ))}
         </div>
 
-        <div className="mt-20 h-50 items-center">
-          <div className="relative w-full flex justify-center">
-            {/* Yellow Border Layer (back layer) */}
-            <div className="w-full border-t-2 border-b-2 border-yellow-500 h-30 z-0"></div>
+        {focused && (
+          <div className="mt-20 h-50 items-center">
+            <div className="relative w-full flex justify-center">
+              {/* Yellow Border Layer */}
+              <div className="w-full border-t-2 border-b-2 border-yellow-500 h-30 z-0"></div>
 
-            {/* Content Overlay (front layer) */}
-            <div className="absolute top-1/2 -translate-y-1/2 z-10 max-w-5xl w-full p-6 flex flex-col md:flex-row justify-between items-center ">
-              {/* Paragraph */}
+              {/* Content Overlay */}
+              <div className="absolute top-1/2 -translate-y-1/2 z-10 max-w-5xl w-full p-6 flex flex-col md:flex-row justify-between items-center">
+                {/* Info Block */}
+                <div className="bg-white p-3 items-center h-auto mt-20 md:mt-0">
+                  <div className="p-3 text-left">
+                    <h3 className="text-lg font-semibold text-yellow-500">
+                      {focused.title}
+                    </h3>
+                    <p className="text-gray-600 text-sm mt-1">
+                      {focused.description}
+                    </p>
+                  </div>
+                </div>
 
-              <div className="bg-white p-3 items-center h-auto mt-20 md:mt-0">
-                <p className="text-yellow-500 text-center md:text-left md:max-w-md text-xl md:text-xl">
-                  Lorem ipsum, dolor sit amet consectetur adipisicing elit. Illo
-                  vel eum iure sit odit, commodi soluta aspernatur eligendi sint
-                  nobis placeat rem laudantium veritatis alias odio aliquam
-                  praesentium similique debitis?
-                </p>
-              </div>
+                {/* Buttons */}
+                <div className="bg-white p-2 w-70 flex justify-center space-x-4 mt-8 md:mt-0">
+                  {/* Show Recipe */}
+                  <Link href={`/recipes/${focused.id}`}>
+                    <button className="relative group bg-yellow-500 text-white px-6 py-2 rounded-md overflow-hidden transition-all duration-300 hover:border hover:border-yellow-500 hover:bg-white hover:text-yellow-500">
+                      <span className="relative z-10">Show Recipe</span>
+                      <span className="absolute left-0 top-0 h-full w-full bg-white text-yellow-500 transform -translate-y-full group-hover:translate-y-0 transition-transform duration-300 ease-in-out z-0" />
+                    </button>
+                  </Link>
 
-              {/* Buttons */}
+                  {/* Share Button (Shadcn Dialog) */}
+                  <Dialog>
+                    <DialogTrigger asChild>
+                      <button
+                        className="group p-2 rounded-md border border-yellow-500 transition duration-300 hover:bg-yellow-500"
+                        title="Share"
+                      >
+                        <span className="block text-yellow-500 group-hover:hidden">
+                          <IoShareSocialOutline size={20} />
+                        </span>
+                        <span className="hidden text-white group-hover:block">
+                          <IoShareSocialSharp size={20} />
+                        </span>
+                      </button>
+                    </DialogTrigger>
+                    <DialogContent>
+                      <DialogHeader>
+                        <DialogTitle>Share this recipe</DialogTitle>
+                        <DialogDescription>
+                          Copy the link below to share
+                        </DialogDescription>
+                      </DialogHeader>
+                      <div className="bg-gray-100 rounded p-2 break-all text-sm text-gray-700">
+                        {shareUrl}
+                      </div>
+                      <button
+                        onClick={() => {
+                          navigator.clipboard.writeText(shareUrl);
+                          alert("Link copied to clipboard!");
+                        }}
+                        className="bg-yellow-500 text-white px-4 py-2 rounded hover:bg-yellow-600 mt-2"
+                      >
+                        Copy Link
+                      </button>
+                    </DialogContent>
+                  </Dialog>
 
-              <div className="bg-white p-2 w-70 flex justify-center space-x-4 mt-8 md:mt-0">
-                {/* Show Recipe Button with Animation */}
-                <button className="relative group bg-yellow-500 text-white px-6 py-2 rounded-md  overflow-hidden transition-all duration-300 hover:border hover:border-yellow-500 hover:bg-white hover:text-yellow-500">
-                  <span className="relative z-10">Show Recipe</span>
-                  <span className="absolute left-0 top-0 h-full w-full bg-white text-yellow-500 transform -translate-y-full group-hover:translate-y-0 transition-transform duration-300 ease-in-out z-0" />
-                </button>
-
-                {/* Share Button with Yellow Border on Hover */}
-                <button
-                  className="group p-2 rounded-md border border-yellow-500 transition duration-300 hover:bg-yellow-500"
-                  title="Share"
-                >
-                  <span className="block text-yellow-500 group-hover:hidden">
-                    <IoShareSocialOutline size={20} />
-                  </span>
-                  <span className="hidden text-white group-hover:block">
-                    <IoShareSocialSharp size={20} />
-                  </span>
-                </button>
-
-                {/* Bookmark Button */}
-                <button
-                  className="group p-2 rounded-md border border-yellow-500 transition duration-300 hover:bg-yellow-500"
-                  title="Bookmark"
-                >
-                  <span className="block text-yellow-500 group-hover:hidden">
-                    <IoBookmarkOutline size={20} />
-                  </span>
-                  <span className="hidden text-white group-hover:block">
-                    <IoBookmarkSharp size={20} />
-                  </span>
-                </button>
+                  {/* Bookmark Button */}
+                  <button
+                    className="group p-2 rounded-md border border-yellow-500 transition duration-300 hover:bg-yellow-500"
+                    title="Bookmark"
+                  >
+                    <span className="block text-yellow-500 group-hover:hidden">
+                      <IoBookmarkOutline size={20} />
+                    </span>
+                    <span className="hidden text-white group-hover:block">
+                      <IoBookmarkSharp size={20} />
+                    </span>
+                  </button>
+                </div>
               </div>
             </div>
           </div>
-        </div>
+        )}
         <div className="flex justify-center w-full">
           <ChefCuate className="w-[80vw] max-w-md h-auto object-contain" />
         </div>
@@ -174,41 +266,47 @@ export default function Home() {
         {/* Section Content */}
         <div className="-mt-1 px-6 md:px-12 h-auto bg-[#1E1E1E]">
           <div className="py-5 flex flex-col md:flex-row justify-center items-center gap-6 text-center">
-            <div className="relative border-2 border-yellow-500 p-4 pt-8 rounded-2xl w-4xs max-w-2xs h-50 bg-[#1E1E1E]">
-              {/* Fake border cover for the gap */}
+            {/* Breakfast */}
+            <Link
+              href="/recipes?session=1"
+              className="relative border-2 border-yellow-500/70 p-4 pt-8 rounded-2xl w-4xs max-w-2xs h-50 bg-[#1E1E1E] hover:shadow-lg transition-all duration-300"
+            >
               <div className="absolute top-4 left-1/2 -translate-x-1/2 py-2 w-52 bg-[#1E1E1E] z-10">
                 <h3 className="font-bold text-3xl text-[#FEF3E2]">Breakfast</h3>
               </div>
-
-              {/* Paragraph content */}
               <p className="text-gray-400 text-sm mt-8">
-                A paragraph is a series...
+                Start your day with energetic and healthy recipes that keep you
+                full and happy. Explore pancakes, smoothies, and more.
               </p>
-            </div>
+            </Link>
 
-            <div className="relative border-2 border-yellow-500 p-4 pt-8 rounded-2xl w-4xs max-w-2xs h-50 bg-[#1E1E1E]">
-              {/* Fake border cover for the gap */}
+            {/* Lunch */}
+            <Link
+              href="/recipes?session=2"
+              className="relative border-2 border-yellow-500/70 p-4 pt-8 rounded-2xl w-4xs max-w-2xs h-50 bg-[#1E1E1E] hover:shadow-lg transition-all duration-300"
+            >
               <div className="absolute top-4 left-1/2 -translate-x-1/2 py-2 w-52 bg-[#1E1E1E] z-10">
                 <h3 className="font-bold text-3xl text-[#FEF3E2]">Lunch</h3>
               </div>
-
-              {/* Paragraph content */}
               <p className="text-gray-400 text-sm mt-8">
-                A paragraph is a series...
+                Enjoy easy, tasty, and filling lunch ideas perfect for work or
+                home. Discover bowls, wraps, and classic dishes.
               </p>
-            </div>
+            </Link>
 
-            <div className="relative border-2 border-yellow-500 p-4 pt-8 rounded-2xl w-4xs max-w-2xs h-50 bg-[#1E1E1E]">
-              {/* Fake border cover for the gap */}
+            {/* Dinner */}
+            <Link
+              href="/recipes?session=3"
+              className="relative border-2 border-yellow-500/70 p-4 pt-8 rounded-2xl w-4xs max-w-2xs h-50 bg-[#1E1E1E] hover:shadow-lg transition-all duration-300"
+            >
               <div className="absolute top-4 left-1/2 -translate-x-1/2 py-2 w-52 bg-[#1E1E1E] z-10">
                 <h3 className="font-bold text-3xl text-[#FEF3E2]">Dinner</h3>
               </div>
-
-              {/* Paragraph content */}
               <p className="text-gray-400 text-sm mt-8">
-                A paragraph is a series...
+                End your day with comforting and satisfying dinners to share
+                with family and friends. From curries to pastas.
               </p>
-            </div>
+            </Link>
           </div>
         </div>
       </section>
@@ -242,47 +340,7 @@ export default function Home() {
       <section className="w-full px-6 md:px-20 py-16 bg-white">
         <div className="grid md:grid-cols-2 gap-10 items-center">
           {/* Left Side: Form */}
-          <div className="space-y-6">
-            <p className="text-lg text-center md:text-left text-black">
-              A paragraph is a series of sentences that longer than a few
-              sentences should
-            </p>
-
-            {/* Email Input */}
-            <div className="flex items-center py-2">
-              <div className="w-10 h-10 bg-yellow-500 rounded-md mr-2" />
-              <span className="text-gray-400 mr-2"></span>
-              <input
-                type="email"
-                placeholder="@email"
-                className="outline-none w-full bg-transparent placeholder-gray-400 text-[#1E1E1E]"
-                onFocus={(className) =>
-                  className.target.classList.add("outline-none")
-                }
-              />
-            </div>
-
-            {/* Feedback Input */}
-            <textarea
-              rows={4}
-              className="w-full border border-gray-300 rounded-md px-4 py-2 placeholder-gray-400 text-[#1E1E1E]"
-              placeholder="Write your feedback here ..."
-            ></textarea>
-
-            {/* Send Button */}
-            <button className="border border-yellow-500 text-yellow-500 px-6 py-2 rounded-md font-medium hover:bg-yellow-500 hover:text-white transition flex items-center gap-2">
-              Send
-              <svg
-                className="w-4 h-4"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth="2"
-                viewBox="0 0 24 24"
-              >
-                <path d="M5 12h14M12 5l7 7-7 7" />
-              </svg>
-            </button>
-          </div>
+          <FeedbackForm />
 
           {/* Right Side: Illustration */}
           <div className="flex justify-center">

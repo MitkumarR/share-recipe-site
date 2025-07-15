@@ -20,7 +20,9 @@ from .views import (
     MyRecipeDeleteView,
     RecipeStepCreateView,
     RecipeStepUpdateView,
-    RecipeStepDeleteView
+    RecipeStepDeleteView,
+    TopRecipesListView,
+    FeedbackCreateView
 )
 
 router = DefaultRouter()
@@ -38,7 +40,10 @@ urlpatterns = [
     path('recipe/<int:pk>/', RecipeDetailView.as_view(), name='recipe-detail'),
     path("filters/", FilterOptionsView.as_view(), name="filter-options"),
     path("options/", OptionsView.as_view(), name="options"),
+    path("top-recipes/", TopRecipesListView.as_view(), name="top-recipes"),
 
+    path("feedback/", FeedbackCreateView.as_view(), name="feedback-create"),
+    
     path("my-recipes/", MyRecipeListView.as_view(), name="my-recipes"),
     path('create/', MyRecipeCreateView.as_view(), name='recipe-create'),
     path('<int:pk>/update/',MyRecipeUpdateView.as_view(), name='recipe-update'),

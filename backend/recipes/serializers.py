@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import Recipe, Ingredient, Region, Session, Category, RecipeStep, Type
+from .models import Recipe, Ingredient, Region, Session, Category, RecipeStep, Type, Feedback
 
 
 class IngredientSerializer(serializers.ModelSerializer):
@@ -85,3 +85,8 @@ class RecipeDetailSerializer(serializers.ModelSerializer):
         model = Recipe
         fields = '__all__'
 
+
+class FeedbackSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Feedback
+        fields = ['id', 'email', 'message', 'created_at']

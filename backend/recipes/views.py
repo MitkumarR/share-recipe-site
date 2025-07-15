@@ -3,11 +3,11 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
 
-from .models import Recipe, Ingredient, Region, Session, Category, RecipeStep, Type
+from .models import Recipe, Ingredient, Region, Session, Category, RecipeStep, Type, Feedback
 from .serializers import (
     RecipeSerializer, IngredientSerializer,
     RegionSerializer, SessionSerializer, CategorySerializer, RecipeListSerializer, RecipeDetailSerializer,
-    RecipeStepSerializer, TypeSerializer
+    RecipeStepSerializer, TypeSerializer, FeedbackSerializer
 )
 
 from django_filters.rest_framework import DjangoFilterBackend
@@ -62,6 +62,10 @@ class RecipeListView(generics.ListAPIView):
     filterset_fields = ['region', 'type', 'session', 'category']
     search_fields = ['title', 'description']
     ordering_fields = ['created_at', 'likes']
+
+class TopRecipesListView(generics.ListAPIView):
+    queryset = Recipe.objects.filter(is_published=True).order_by("-likes")[:10]
+    serializer_class = RecipeListSerializer
 
 class RecipeDetailView(generics.RetrieveAPIView):
     queryset = Recipe.objects.filter(is_published=True)
@@ -172,3 +176,9 @@ class MyRecipeDeleteView(generics.DestroyAPIView):
     def get_queryset(self):
         # Only allow delete if the user is the author
         return Recipe.objects.filter(author=self.request.user)
+
+
+class FeedbackCreateView(generics.CreateAPIView):
+    queryset = Feedback.objects.all()
+    serializer_class = FeedbackSerializer
+    permission_classes = [permissions.AllowAny]
